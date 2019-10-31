@@ -1,0 +1,31 @@
+<!-- Contact Section -->
+<div class="padding-64 content text-grey" id="contact">
+  <h2 class="text-light-grey">Contact Me</h2>
+  <hr style="width:200px" class="opacity">
+
+  <div class="section">
+    <p><i class="fa fa-map-marker fa-fw text-white xxlarge margin-right"></i> Melbourne, Aus</p>
+    <p><i class="fa fa-phone fa-fw text-white xxlarge margin-right"></i> Phone: +61 430 194 007</p>
+    <p><i class="fa fa-envelope fa-fw text-white xxlarge margin-right"> </i> Email: simon.leserve@gmail.com
+    </p>
+  </div><br>
+  <p>Lets get in touch. Send me a message:</p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <p>
+      <input formControlName="name" class="input padding-16" type="text" placeholder="Name" required name="Name"></p>
+    <p>
+      <input formControlName="email" class="input padding-16" type="text" placeholder="Email" required name="Email">
+    </p>
+    <p><input formControlName="subject" class="input padding-16" type="text" placeholder="Subject" required
+        name="Subject"></p>
+    <p><input formControlName="text" class="input padding-16" type="text" placeholder="Message" required
+        name="text"></p>
+    <p>
+      <button class="button light-grey padding-large" type="submit">
+        <i class="fa fa-paper-plane"></i> SEND MESSAGE
+      </button>
+    </p>
+  </form>
+  <!-- End Contact Section -->
+</div>

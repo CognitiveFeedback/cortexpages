@@ -1,0 +1,16 @@
+<div class="padding-64 content text-gray" id="messages">
+  <h2 class="text-light-grey">Messages</h2>
+  <hr style="width:200px" class="opacity">
+  <ul class="messages-list">
+    <li *ngFor="let item of messages">
+      <div class="list-item">
+        <span class="badge id">{{item.id}}</span>
+        <span class="created-date"> {{item.createdDate}}</span>
+        <span class="email"> {{item.email}}</span>
+        <span class="subject">{{item.subject}}</span>
+        <span class="text"> {{item.text}}</span>
+      </div>
+    </li>
+  </ul>
+
+</div>

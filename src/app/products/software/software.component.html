@@ -1,0 +1,27 @@
+<div class="padding-64 content text-grey" id="software">
+  <h2 class="text-light-grey">Software</h2>
+  <hr style="width:200px" class="opacity">
+
+  <canvas #canvas class="canvas" width="980" height="500" draggable="false" (mousedown)="onMouseDown($event);"
+    (mouseup)="onMouseUp($event);" (mousemove)="mousemove($event);"></canvas>
+  <button (click)="reset()">RESET</button>
+  <button (click)="animate()">ANIMATE</button>
+  <button (click)="store()" *ngIf="pixelItems.length && pixelItems.length > 5">STORE</button>
+  <div class="catalog">
+    <div *ngFor="let item of pixelCatalog; let i = index;" class="item">
+      <span class="stack-depth">{{item.pixelItems && item.pixelItems.length}}</span>
+      <span class="delta">{{item.minDelta}}</span>
+      <img width="180" height="100" (click)="load(i);"
+        [src]="item.pixelItems && item.pixelItems[2].png64 || placeholder" alt="&lt;3" draggable="false">
+    </div>
+  </div>
+  <div class="information">
+    <span class="delta">{{toPoint.x-fromPoint.x}}</span>
+    <!-- <ul class="stack">
+      <li *ngFor="let frame of pixelItems; let i = index;" class="stack-item">
+        <img width="180" height="100" (click)="click(pixelItems.length - i - 1);"
+          [src]="pixelItems[pixelItems.length - i - 1].image.src">
+      </li>
+    </ul> -->
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<!-- Icon Bar (Sidebar - hidden on small screens) -->
+<nav class="sidebar bar-block small hide-small center" style="background:black;">
+  <!-- Avatar image in top left corner -->
+  <img src="/assets/images/avatar_smoke.jpg" style="width:100%">
+  <div class="menu">
+    <div class="menu-item">
+      <div class="bar-item" (click)="navigateTo('about');" [ngClass]="{'active-link': path == '/about'}">
+        <p>ABOUT</p>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="bar-item menu-item" (click)="navigateTo('photos');" [ngClass]="{'active-link': path == '/photos'}">
+        <p>PHOTOGRAPHY</p>
+      </div>
+      <div class="dropdown" [ngClass]="{'open': isOpen('/photos')}">
+        <div class="bar-item menu-item" (click)="navigateTo('photos/portrait');"
+          [ngClass]="{'active-link': path == '/photos/portrait'}">
+          <p>PORTRAIT</p>
+        </div>
+        <div class="bar-item" (click)="navigateTo('photos/product');"
+          [ngClass]="{'active-link': path == '/photos/product'}">
+          <p>PRODUCT</p>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="bar-item menu-item" (click)="navigateTo('products');"
+        [ngClass]="{'active-link': path == '/products'}">
+        <p>SERVICES</p>
+      </div>
+      <div class="dropdown" [ngClass]="{'open': isOpen('/products')}">
+        <div class="bar-item menu-item" (click)="navigateTo('products/software');"
+          [ngClass]="{'active-link': path == '/products/software'}">
+          <p>SOFTWARE</p>
+        </div>
+        <div class="bar-item" (click)="navigateTo('products/websites');"
+          [ngClass]="{'active-link': path == '/products/websites'}">
+          <p>WEBSITES</p>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="bar-item menu-item" (click)="navigateTo('contact');" [ngClass]="{'active-link': path == '/contact'}">
+        <p>CONTACT</p>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="bar-item menu-item" (click)="navigateTo('messages');"
+        [ngClass]="{'active-link': path == '/messages'}">
+        <p>MESSAGES</p>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- Navbar on small screens (Hidden on medium and large screens) -->
+<div class="top hide-large hide-medium" id="myNavbar">
+  <div class="bar black opacity hover-opacity-off center small">
+    <a [routerLink]="'/about'" class="bar-item button" style="width:25% !important">ABOUT</a>
+    <a [routerLink]="'/products'" class="bar-item button" style="width:25% !important">PRODUCTS</a>
+    <a [routerLink]="'/photos'" class="bar-item button" style="width:25% !important">PHOTOGRAPHY</a>
+    <a [routerLink]="'/contact'" class="bar-item button" style="width:25% !important">CONTACT</a>
+  </div>
+</div>

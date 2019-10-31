@@ -1,0 +1,40 @@
+.sidebar {
+    background: #1b1b1b !important;
+    overflow: hidden;
+
+    .menu {
+        .menu-item {
+            cursor: pointer;
+            user-select: none;
+
+            :hover {
+                background: #2b2b2b;
+            }
+
+            .active-link,
+            .active-link p {
+                background: white;
+                color: black;
+                font-weight: bold;
+            }
+
+            .dropdown {
+                background: #2b2b2b;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height .3s ease-in-out, box-shadow 0.6s linear;
+
+                &.open {
+                    max-height: 400px;
+                }
+
+                .active-link,
+                .active-link p {
+                    background: #ccc;
+                    color: black;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}

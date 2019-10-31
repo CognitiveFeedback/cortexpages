@@ -1,0 +1,73 @@
+#software {
+    position: relative;
+
+    .canvas {
+        background: white;
+        border: 1px solid #1b1b1b;
+        width: 100%;
+    }
+
+    button {
+        height: 50px;
+        padding: 10px 20px;
+    }
+
+    .information {
+        background: black;
+        color: red;
+        font-size: .9rem;
+        height: auto;
+        left: -100px;
+        position: absolute;
+        top: 120px;
+        width: 100px;
+    }
+
+    div.catalog {
+        list-style: none;
+        margin-top: 20px;
+        width: 100%;
+
+        .item {
+            display: inline-block;
+            margin: 5px 5px 0 0;
+            position: relative;
+
+            .stack-depth {
+                color: green;
+                font-size: 2.4rem;
+                left: 0;
+                position: absolute;
+                top: 0;
+            }
+
+            .delta {
+                bottom: 0;
+                color: green;
+                font-size: 1rem;
+                left: 0;
+                position: absolute;
+            }
+
+            img {
+                border: 1px solid #1b1b1b;
+                cursor: pointer;
+            }
+        }
+    }
+
+    ul.stack {
+        list-style: none;
+        overflow: hidden;
+        padding-left: 0;
+
+        .stack-item {
+            margin: 5px 0;
+
+            img {
+                border: 1px solid #1b1b1b;
+                cursor: pointer;
+            }
+        }
+    }
+}

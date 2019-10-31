@@ -1,0 +1,33 @@
+.bar-item{
+    .popup-menu {
+        display: block;
+    }
+}
+
+.messages-list {
+    color: #999;
+    list-style: none;
+    padding-left: 0;
+
+    :hover {
+        background: #222;
+        color: #fff;
+    }
+
+    .list-item {
+        border-bottom: 1px solid #1b1b1b;
+        border-left: 5px solid #2b2b2b;
+        margin: 1px;
+        padding: 10px 5px;
+
+        .created-date {
+            color: #555;
+        }
+
+        .text {
+            display: block;
+            padding: 0 0 0 40px;
+        }
+
+    }
+}
