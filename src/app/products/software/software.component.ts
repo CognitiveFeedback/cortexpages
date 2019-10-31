@@ -28,6 +28,7 @@ export class SoftwareComponent implements OnInit {
   private imageData: ImageData;
   private pixels: MandelbrotPixels;
   private pixelCatalog: PixelCatalog[];
+  private maxIterations: number;
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   private ctx: CanvasRenderingContext2D;
@@ -36,15 +37,6 @@ export class SoftwareComponent implements OnInit {
       this.worker = new Worker('./software.worker', { type: 'module' });
     }
   }
-
-  get offsetX() { return this.offset.x; }
-  set offsetX(value: number) { this.offset.x = value; }
-  get offsetY() { return this.offset.y; }
-  set offsetY(value: number) { this.offset.y = value; }
-  get stretchX() { return this.stretch.x; }
-  set stretchX(value: number) { this.stretch.x = value; }
-  get stretchY() { return this.stretch.y; }
-  set stretchY(value: number) { this.stretch.y = value; }
 
   ngOnInit() {
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -58,11 +50,11 @@ export class SoftwareComponent implements OnInit {
         });
       }
     });
-    this.setupworkerCallback();
+    this.setupWorkerCallback();
     this.reset();
   }
 
-  private setupworkerCallback() {
+  setupWorkerCallback() {
     this.worker.onmessage = ({ data: response }) => {
       this.imageData = response.data;
       switch (response.message) {
@@ -83,6 +75,7 @@ export class SoftwareComponent implements OnInit {
         default:
           break;
       }
+      this.maxIterations = response.maxIterations;
     };
   }
 
@@ -111,7 +104,7 @@ export class SoftwareComponent implements OnInit {
   }
 
   redrawFrame(frame: PixelItem) {
-    this.ctx.drawImage(frame.image, this.offsetX, this.offsetY, this.canvas.nativeElement.width * this.stretchX, this.canvas.nativeElement.height * this.stretchY);
+    this.ctx.drawImage(frame.image, this.offset.x, this.offset.y, this.canvas.nativeElement.width * this.stretch.x, this.canvas.nativeElement.height * this.stretch.y);
   }
 
   onMouseDown(event: MouseEvent) {
@@ -168,11 +161,11 @@ export class SoftwareComponent implements OnInit {
     this.ctx.fillRect(this.dragFromPixel.x, this.dragFromPixel.y, this.dragToPixel.x, this.dragToPixel.y);
   }
 
-  private drawAnimationFrame(i: number, pixelItem: PixelItem) {
-    this.stretchX = 1 + (this.canvas.nativeElement.width / this.dragToPixel.x - 1) * i / this.animFrames;
-    this.stretchY = 1 + (this.canvas.nativeElement.height / this.dragToPixel.y - 1) * i / this.animFrames;
-    this.offsetX = -this.dragFromPixel.x * (this.stretchX - (1 * (this.animFrames - i) / this.animFrames));
-    this.offsetY = -this.dragFromPixel.y * (this.stretchY - (1 * (this.animFrames - i) / this.animFrames));
+  drawAnimationFrame(i: number, pixelItem: PixelItem) {
+    this.stretch.x = 1 + (this.canvas.nativeElement.width / this.dragToPixel.x - 1) * i / this.animFrames;
+    this.stretch.y = 1 + (this.canvas.nativeElement.height / this.dragToPixel.y - 1) * i / this.animFrames;
+    this.offset.x = -this.dragFromPixel.x * (this.stretch.x - (1 * (this.animFrames - i) / this.animFrames));
+    this.offset.y = -this.dragFromPixel.y * (this.stretch.y - (1 * (this.animFrames - i) / this.animFrames));
     this.redrawFrame(pixelItem);
   }
 
@@ -206,10 +199,10 @@ export class SoftwareComponent implements OnInit {
   }
 
   resetTransform() {
-    this.offsetX = 0;
-    this.offsetY = 0;
-    this.stretchX = 1;
-    this.stretchY = 1;
+    this.offset.x = 0;
+    this.offset.y = 0;
+    this.stretch.x = 1;
+    this.stretch.y = 1;
   }
 
   bitmapToImage(imagedata: ImageData) {

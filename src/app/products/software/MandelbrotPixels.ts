@@ -42,7 +42,7 @@ export class MandelbrotPixels {
     }
 
     private getMaxIterations(delta: number): number {
-        let exp = 1 / Math.log10(delta);
+        let exp = Math.log10(1 / delta);
         let result = Math.abs(exp * 400);
         return result;
     }
