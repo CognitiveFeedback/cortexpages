@@ -18,7 +18,7 @@ export class MandelbrotPixels {
         this.maxY = to.y;
 
         let delta = this.maxX - this.minX;
-        this.maxIterations = this.setMaxIterations(delta);
+        this.maxIterations = this.getMaxIterations(delta);
     }
 
     render(from: Point2D, to: Point2D): ImageData {
@@ -28,7 +28,7 @@ export class MandelbrotPixels {
         this.maxY = to.y;
 
         let delta = this.maxX - this.minX;
-        this.maxIterations = this.setMaxIterations(delta);
+        this.maxIterations = this.getMaxIterations(delta);
 
         for (let i = 0; i < this.imageData.width; i++) {
             for (let j = 0; j < this.imageData.height; j++) {
@@ -41,26 +41,10 @@ export class MandelbrotPixels {
         return this.imageData;
     }
 
-    private setMaxIterations(delta: number): number {
-        if (delta < 1) {
-            this.maxIterations = 500;
-        }
-        if (delta < .1) {
-            this.maxIterations = 1000;
-        }
-        if (delta < .01) {
-            this.maxIterations = 2500;
-        }
-        if (delta < .001) {
-            this.maxIterations = 5000;
-        }
-        if (delta < .0001) {
-            this.maxIterations = 10000;
-        }
-        if (delta < .00001) {
-            this.maxIterations = 20000;
-        }
-        return this.maxIterations;
+    private getMaxIterations(delta: number): number {
+        let exp = 1 / Math.log10(delta);
+        let result = Math.abs(exp * 400);
+        return result;
     }
 
     getColor(point: Point2D): Array<number> {

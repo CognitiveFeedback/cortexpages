@@ -31,7 +31,7 @@ export class PixelItem {
     }
 
     get minDelta(): number {
-        return this.toPoint.x - this.toPoint.y;
+        return this.toPoint.x - this.fromPoint.x
     }
 
     toString(): string {

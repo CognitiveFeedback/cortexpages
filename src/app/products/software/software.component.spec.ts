@@ -4,16 +4,15 @@ import { SoftwareComponent } from './software.component';
 import { MandelbrotPixels } from './MandelbrotPixels';
 import { Point2D } from './Point2D';
 import { ComplexNumber } from './ComplexNumber';
+import { MODULE } from 'src/app/app.component.spec';
 
 describe('SoftwareComponent', () => {
   let component: SoftwareComponent;
   let fixture: ComponentFixture<SoftwareComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [SoftwareComponent]
-    })
-      .compileComponents();
+    TestBed.configureTestingModule(MODULE)
+    .compileComponents();
   }));
 
   beforeEach(() => {

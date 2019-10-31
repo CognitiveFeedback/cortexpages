@@ -26,7 +26,7 @@ const routes: Routes = [
   },
   {
     path: 'products', children: [
-      { path: '', component: PhotosComponent },
+      { path: '', component: ProductsComponent },
       { path: 'software', component: SoftwareComponent },
       { path: 'websites', component: WebsitesComponent },
     ]

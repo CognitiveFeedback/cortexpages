@@ -3,6 +3,7 @@ import { MandelbrotPixels } from './MandelbrotPixels';
 import { Point2D } from './Point2D';
 import { DataService } from 'src/app/services/data-service.service';
 import { PixelCatalog } from './PixelCatalog';
+import { PixelItem } from './PixelItem';
 
 @Component({
   selector: 'app-software',
@@ -23,15 +24,18 @@ export class SoftwareComponent implements OnInit {
   private dragAnimHandle: number;
   private animationHandle: number;
   private sequenceGuid: string;
-  private worker = new Worker('./software.worker', { type: 'module' });
+  private worker: Worker;
   private imageData: ImageData;
   private pixels: MandelbrotPixels;
   private pixelCatalog: PixelCatalog[];
-  private placeholder: string;
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   private ctx: CanvasRenderingContext2D;
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService) {
+    if (Worker !== undefined) {
+      this.worker = new Worker('./software.worker', { type: 'module' });
+    }
+  }
 
   get offsetX() { return this.offset.x; }
   set offsetX(value: number) { this.offset.x = value; }
@@ -54,18 +58,22 @@ export class SoftwareComponent implements OnInit {
         });
       }
     });
+    this.setupworkerCallback();
+    this.reset();
+  }
+
+  private setupworkerCallback() {
     this.worker.onmessage = ({ data: response }) => {
       this.imageData = response.data;
       switch (response.message) {
         case "reset":
           this.ctx.putImageData(this.imageData, 0, 0);
           this.pushPixelItem();
-          this.placeholder = this.bitmapToImage(this.imageData).src;
           break;
         case "zoom":
           this.imageData = response.data;
           let zoomWait = window.setInterval(() => {
-            if (this.animationHandle == 0) {
+            if (this.dragAnimHandle == 0) {
               this.ctx.putImageData(this.imageData, 0, 0);
               this.pushPixelItem();
               window.clearInterval(zoomWait);
@@ -76,7 +84,6 @@ export class SoftwareComponent implements OnInit {
           break;
       }
     };
-    this.reset();
   }
 
   pushPixelItem() {
@@ -94,7 +101,7 @@ export class SoftwareComponent implements OnInit {
   reset() {
     if (this.animationHandle) { window.clearInterval(this.animationHandle); }
     if (this.dragAnimHandle) { window.clearInterval(this.dragAnimHandle); }
-    this.sequenceGuid = this.uuidv4();
+    this.sequenceGuid = this.newGuid();
     this.fromPoint = new Point2D(-2, -1);
     this.toPoint = new Point2D(.5, 1);
     this.dragFromPixel = new Point2D();
@@ -103,13 +110,7 @@ export class SoftwareComponent implements OnInit {
     this.worker.postMessage({ fromPoint: this.fromPoint, toPoint: this.toPoint, imageData: this.imageData, pixels: this.pixels, message: "reset" });
   }
 
-  render(i: number) {
-    let image = this.bitmapToImage(this.pixelItems[i].bitmap);
-    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-    this.ctx.drawImage(image, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-  }
-
-  redraw(frame: PixelItem) {
+  redrawFrame(frame: PixelItem) {
     this.ctx.drawImage(frame.image, this.offsetX, this.offsetY, this.canvas.nativeElement.width * this.stretchX, this.canvas.nativeElement.height * this.stretchY);
   }
 
@@ -145,8 +146,6 @@ export class SoftwareComponent implements OnInit {
       if (i == this.animFrames + 1) {
         window.clearInterval(this.dragAnimHandle);
         this.dragAnimHandle = 0;
-        this.ctx.putImageData(this.imageData, 0, 0);
-        this.pushPixelItem();
         return;
       }
       this.drawAnimationFrame(i, this.pixelItems[this.pixelItems.length - 1]);
@@ -174,13 +173,13 @@ export class SoftwareComponent implements OnInit {
     this.stretchY = 1 + (this.canvas.nativeElement.height / this.dragToPixel.y - 1) * i / this.animFrames;
     this.offsetX = -this.dragFromPixel.x * (this.stretchX - (1 * (this.animFrames - i) / this.animFrames));
     this.offsetY = -this.dragFromPixel.y * (this.stretchY - (1 * (this.animFrames - i) / this.animFrames));
-    this.redraw(pixelItem);
+    this.redrawFrame(pixelItem);
   }
 
   animate() {
     let i = 0;
     let j = 0;
-    let currentPixelFrame: PixelItem;
+    let pixelItem: PixelItem;
     this.resetTransform();
     if (this.animationHandle) {
       window.clearInterval(this.animationHandle);
@@ -192,21 +191,21 @@ export class SoftwareComponent implements OnInit {
         window.clearInterval(this.animationHandle);
         this.animationHandle = 0;
         this.resetTransform();
-        this.redraw(currentPixelFrame);
+        this.redrawFrame(pixelItem);
         return;
       }
       if (i % this.animFrames == 0) {
-        currentPixelFrame = this.pixelItems[j];
-        this.dragFromPixel = currentPixelFrame.dragFromPixel;
-        this.dragToPixel = currentPixelFrame.dragToPixel;
+        pixelItem = this.pixelItems[j];
+        this.dragFromPixel = pixelItem.dragFromPixel;
+        this.dragToPixel = pixelItem.dragToPixel;
         j++;
       }
-      this.drawAnimationFrame(i % this.animFrames, currentPixelFrame);
+      this.drawAnimationFrame(i % this.animFrames, pixelItem);
       i++;
     }, 30);
   }
 
-  private resetTransform() {
+  resetTransform() {
     this.offsetX = 0;
     this.offsetY = 0;
     this.stretchX = 1;
@@ -241,51 +240,10 @@ export class SoftwareComponent implements OnInit {
     this.animate();
   }
 
-  uuidv4() {
+  newGuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
-  }
-}
-
-
-export class PixelItem {
-  constructor(public fromPoint: Point2D,
-    public toPoint: Point2D,
-    public dragFromPixel: Point2D,
-    public dragToPixel: Point2D,
-    public bitmap: ImageData) { }
-
-  public sequenceGuid: string;
-  public sequence: number;
-  public createdDate: string;
-  public png64: string;
-
-  get image() {
-    if (this.png64 === undefined) {
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      canvas.width = this.bitmap.width;
-      canvas.height = this.bitmap.height;
-      ctx.putImageData(this.bitmap, 0, 0);
-      var image = new Image();
-      this.png64 = canvas.toDataURL();
-      image.src = this.png64;
-      return image;
-    }
-    else {
-      var image = new Image();
-      image.src = this.png64;
-      return image;
-    }
-  }
-
-  get minDelta(): number {
-    return this.toPoint.x - this.toPoint.y;
-  }
-
-  toString(): string {
-    return `${this.fromPoint},${this.toPoint},${this.dragFromPixel},${this.dragToPixel}`
   }
 }
